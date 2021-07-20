@@ -1,0 +1,20 @@
+Here, basic idea is suppose we are at end of 2 string if these two char are equal then both will be added and call for prev
+Else any one of this will be added so we find maximum out of those.
+
+
+If a[i] == b[j], LCS for i and j would be 1 plus LCS till the i-1 and j-1 indexes.
+Otherwise, we will take the largest LCS if we skip a charracter from one of the string (max(m[i - 1][j], m[i][j - 1]).
+
+int Solution::solve(string A, string B) {
+    int n = A.size(), m = B.size();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+    for(int i = 1; i <= n; i++){
+        for(int j = 1; j <= m; j++){
+            if(A[i-1] == B[j-1]){
+                dp[i][j] = dp[i-1][j-1] + 1;
+            }
+            else dp[i][j] = max(dp[i-1][j] , dp[i][j-1]);
+        }
+    }
+    return dp[n][m];
+}
