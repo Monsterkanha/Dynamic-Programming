@@ -14,3 +14,18 @@ int Solution::anytwo(string A) {
     }
     return dp[n][n] >= 2;
 }
+
+2. Recursively :-
+if element are equal but index are same then have to avoid any one . 
+int solve(int i , int j , string& A, vector<vector<int>>& memo){
+    if(i == 0 || j == 0) return 0;
+    if(memo[i][j] != -1) return memo[i][j];
+    if(A[i-1] == A[j-1] && i != j) return memo[i][j] = 1 + solve(i-1, j-1, A, memo);
+
+    return memo[i][j] = max(solve(i-1, j , A , memo) , solve(i , j-1, A, memo));
+}
+int Solution::anytwo(string A) {
+    int n = A.size();
+    vector<vector<int>> memo(n+1, vector<int>(n+1 , -1));
+    return solve(n, n, A, memo) >= 2;
+}
