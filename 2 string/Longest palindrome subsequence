@@ -1,0 +1,20 @@
+1. lcs of string and reverse of that .
+
+2. Use of fact if two index lets say first and last if they are same they they will come together and increase our answer.
+else either of one of two will rejected. find max of those case.
+
+
+int dp(int l , int r, string& s, vector<vector<int>>& memo){
+    if(l == r) return 1;
+    if(l > r) return 0;
+    if(memo[l][r])  return memo[l][r];
+
+    return memo[l][r] = (s[l] == s[r])?2 + dp(l+1, r-1, s, memo):
+        max(dp(l+1, r, s, memo), dp(l , r-1, s, memo));
+}
+
+int Solution::solve(string A) {
+    int n = A.size();
+    vector<vector<int>> memo(n , vector<int>(n));
+    return dp(0, n-1, A, memo);
+}
