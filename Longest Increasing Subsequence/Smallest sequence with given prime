@@ -1,0 +1,23 @@
+Here, We know priority queue and at each time we will multiply with minimum only.
+So, we will trying to populate our answer.
+
+
+#define ll long long 
+vector<int> Solution::solve(int A, int B, int C, int D) {
+    if(D == 0) return {};
+    vector<int> primes{A,B,C};
+    ll top, i=0;
+    vector<int> arr(D, -1);
+    priority_queue<int, vector<int>, greater<int>> pq={};
+    pq.push(1);
+    while(!pq.empty() && arr[D-1]==-1){
+        top=pq.top();
+        if(top != 1)  arr[i++]=top;
+        pq.pop();
+        for(auto elt:primes)
+            pq.push(top*elt);
+        while(!pq.empty() && top==pq.top())
+            pq.pop();
+    }
+    return arr;
+}
