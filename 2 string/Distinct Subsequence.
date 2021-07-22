@@ -1,0 +1,47 @@
+Given two sequences A, B, count number of unique ways in sequence A, to form a subsequence that is identical to the sequence B.
+
+eg. abcececceece
+b = ace 
+
+so we start from last character of b and check whether this is equal to our current element in A if yes then{
+  1. We add number of subsequence considering it.
+  2. Without considering it.
+}
+else we have to retrive from previous only.
+
+if the current character in S doesn't equal to current character T, then we have the same number of distinct subsequences as we had without the new character.
+if the current character in S equal to the current character T, then the distinct number of subsequences: the number we had before plus the distinct number of subsequences we had with less longer T and less longer S.
+
+Here, dp[i][j] means  a(0 . j-1) contains this many times of b( 0. i-1) sequence.
+
+Base case if T is empty then we have 1 choice, and if S is empty then 0.
+look dp[0][0] is 1.
+  S 0123....j
+T +----------+
+  |1111111111|
+0 |0         |
+1 |0         |
+2 |0         |
+. |0         |
+. |0         |
+i |0         |
+
+if this matches, then number of way  considering it. will be dp[i-1][j-1]  + w/o considering dp[i][j-1]. and fill the table.
+
+int Solution::numDistinct(string A, string B) {
+    int n = A.size() , m = B.size();
+    vector<vector<int>> dp(m+1, vector<int>(n+1, 0));
+    for(int i = 0; i <= n; i++){
+        dp[0][i] = 1;
+    }
+    for(int i = 1; i <= m; i++){
+        for(int j = 1; j<= n; j++){
+            if(B[i-1] == A[j-1]){
+                dp[i][j] = dp[i-1][j-1] + dp[i][j-1]; 
+            }
+            else dp[i][j] = dp[i][j-1];
+        }
+    }
+    return dp[m][n];
+}
+
