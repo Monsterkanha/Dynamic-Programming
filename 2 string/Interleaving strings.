@@ -1,0 +1,23 @@
+Here, either last character of C is in A or in B then call recursively for previous. 
+and use memoization. to recursively. 
+
+int Solution::isInterleave(string A, string B, string C) {
+    int n = A.size() , m = B.size() , o = C.size();
+    vector<vector<int8_t>> dp(n+1 , vector<int8_t>(m+1, -1));
+
+    function<int8_t(int , int)> solve = [&](int i , int j){
+        if(i == 0 && j == 0){
+            return dp[i][j] = true;
+        }
+        if(dp[i][j] != -1) return dp[i][j];
+        dp[i][j] = false;
+        if(i > 0 && A[i-1] == C[i+j-1]){
+            dp[i][j] = solve(i-1,j);
+        }
+        if(j > 0 && B[j-1] == C[i+j-1]){
+            dp[i][j] = dp[i][j] || solve(i, j-1);
+        }
+        return dp[i][j];
+    };
+    return solve(n,m);
+}
