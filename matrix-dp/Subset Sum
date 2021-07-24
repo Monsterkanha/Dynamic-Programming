@@ -1,0 +1,21 @@
+Simple dp implementation.
+
+int Solution::solve(vector<int> &A) {
+    int sum = 0;
+    for(auto x: A)  sum += x;
+    int val = sum;
+    sum /= 2;
+    int n = A.size();
+    vector<vector<int>> dp(n+1, vector<int>(sum+1,0));
+   
+    for(int i = 1; i <= n; i++){
+        for(int j = 1; j <= sum ; j++){
+            dp[i][j] = dp[i-1][j];
+            if(j - A[i-1] >= 0){
+                dp[i][j] = max(dp[i][j] , A[i-1] + dp[i-1][j-A[i-1]]);
+            }
+        }
+    } 
+
+    return val - 2*dp[n][sum];
+}
