@@ -1,0 +1,27 @@
+Here, dp maintain height at current index. and then we do similar procedure of maximal rectangle.
+For that we maintain increasing queue. If current element is smaller then we know for sure, this will be right boundary for my stack top .
+
+
+int Solution::maximalRectangle(vector<vector<int> > &A) {
+    int n = A.size() , m = A[0].size();
+    vector<int> dp(m+1,0);
+    int ans = 0;
+    for(int i = 0 ; i < n; i++){
+        for(int j = 0 ; j < m; j++){
+            if(A[i][j] == 0) dp[j] = 0;
+            else dp[j]++;
+        }
+        stack<int> s;
+        for(int k = 0 ; k <= m ; k++){
+            while(!s.empty() && dp[s.top()] >= dp[k]){
+                int h = dp[s.top()];
+                s.pop();
+                int idx = (s.empty())?-1:s.top();
+                ans = max(ans, h*(k-idx-1));
+            }
+            s.push(k);
+        }
+    }
+    return ans;
+
+}
