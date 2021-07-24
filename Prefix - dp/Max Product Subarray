@@ -1,0 +1,14 @@
+Here, We will calculate product of subarray using kadane, 
+Maintain two local_min and local_max if current no. is negative then we will mulitply this with local_min to get local_max or simply we can start new sequence from here.
+
+
+int Solution::maxProduct(const vector<int> &A) {
+    int local_max{A[0]} , local_min{A[0]} , ans{A[0]};
+    for(int i = 1 ; i < A.size(); i++){
+        if(A[i] < 0)   swap(local_max, local_min);
+        local_max = max(A[i], local_max*A[i]);
+        local_min = min(A[i], local_min*A[i]);
+        ans = max(ans, local_max);
+    }
+    return ans;
+}
