@@ -1,0 +1,14 @@
+Start from bottom to up. 
+And create a dp of A.back();
+
+
+int Solution::solve(vector<vector<int> > &A) {
+    int n = A.size();
+    vector<int> dp(A.back());
+    for(int i = n-2; i >= 0; i--){
+        for(int j = 0 ; j < A[i].size()-1; j++){
+            dp[j] = max(dp[j],dp[j+1]) + A[i][j];
+        }
+    }
+    return dp[0];
+}
