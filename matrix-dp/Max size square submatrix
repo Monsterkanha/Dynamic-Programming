@@ -1,0 +1,27 @@
+Here, We will use dp. dp[i][j] will tell use the maximum square submatrix ending at this pos.
+
+we have to first row and first col case to initialize ans from that only.
+
+Then simple recurrence. 
+
+A[i][j] == 1 then we check A[i-1][j-1] , A[i-1][j] , A[i][j-1] minimum of all these.
+
+int Solution::solve(vector<vector<int> > &A) {
+
+    int n = A.size() , m = A[0].size();
+    int ans = 0;
+    for(int i = 0; i < m; i++){
+        if(A[0][i] == 1) ans = 1;
+    }
+    for(int i = 0 ; i < n ; i++){
+        if(A[i][0] == 1) ans = 1;
+    }
+    for(int i = 1; i < n; i++){
+        for(int j = 1; j < m; j++){
+            if(A[i][j] != 1) continue;
+            A[i][j] = min(min(A[i-1][j-1] , A[i-1][j]), A[i][j-1]) + 1;
+            ans = max(ans, A[i][j]*A[i][j]);
+        }
+    }
+    return ans;
+}
