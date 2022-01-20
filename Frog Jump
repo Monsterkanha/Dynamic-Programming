@@ -1,0 +1,44 @@
+Here,
+dp[i][x] will tell can reach to ith stone with having x size jump,
+for that i will reach to the previous stone whose index i will store in map 
+and check whether i can reach to this stone with x - 1 , x , x + 1 size jump.
+
+
+Base cond :- i < 0 reached beyond first stone, jump size < 0 or jump size > n max limit return 0;
+if(i == 0 && x == 0) return 1; base condition.
+
+class Solution {
+public:
+    bool canCross(vector<int>& stones) {
+        int n = stones.size();
+        vector<vector<int>> dp(n+1, vector<int>(n+1, -1));
+        
+        map<int,int> M;
+        for(int i= 0; i < n; i++){
+            M[stones[i]] = i;
+        }
+        function<int(int , int)> solve = [&](int i, int x){
+            if(i < 0 || x < 0 || x > n) return 0;
+            if(i == 0 && x == 0){
+                return dp[i][x] = 1;
+            }
+            if(i == 0 || x == 0){
+                return dp[i][x] = 0;
+            }
+            
+            if(dp[i][x] != -1) return dp[i][x];
+            
+            int pid = stones[i] - x;
+            if(M.find(pid) == M.end()){          // Check index of previous stone whether that really exist. 
+                return dp[i][x] = 0;
+            }
+            return dp[i][x] = solve(M[pid], x-1) || solve(M[pid] , x) || solve(M[pid],x+1); // Check for all the three cases. 
+        };
+    
+        
+        for(int i = n-1; i >= 0 ; i--){
+            if(solve(n-1, i)) return true;
+        }
+        return false;
+    }
+};
