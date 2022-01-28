@@ -1,0 +1,47 @@
+Here, we will first store the freq of each element and create a array.
+
+Now, suppose our array looks like 
+
+2 4 5 6 8
+1. dp[i] gives me answer to current index number.
+2. recurrence either i choose ith element or i do not choose ith element.
+if i choose 
+dp[i] = dp[i-2] + frq[i]*i;
+
+or else dp[i] = dp[i-1]
+
+if previous element is not just one difference then we can include that one and also include current one as well.
+class Solution {
+public:
+    int deleteAndEarn(vector<int>& nums) {
+        map<int,int> M;
+
+        for(auto x: nums){
+            M[x]++;
+            
+        }
+        vector<int> arr;
+        for(auto x: M){
+            arr.push_back(x.first);
+        }
+        
+        int n = arr.size();
+        vector<int> dp(n+1, -1);
+
+        function<int(int)> solve = [&](int i){
+            if(i < 0) return 0;  // Base case.
+            if(i == 0){          // Valid smallest input.
+                return M[arr[0]]*arr[0];
+            }
+            if(dp[i] != -1) return dp[i];
+            
+            if(arr[i] - arr[i-1] == 1)
+                return dp[i] = max(solve(i-1) , M[arr[i]]*arr[i] + solve(i-2));       // EIther choose current one or skip this one.
+            else
+                return dp[i] =  M[arr[i]]*arr[i] + solve(i-1);      // can choose current one and answer till the previous index.
+            
+        };
+        
+        return solve(n-1);
+    }
+};
