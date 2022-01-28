@@ -1,0 +1,23 @@
+Here, we can either take jump of 1 or 2.
+
+1. dp[i] = min steps needed to reach to this state.
+2. recurrence either i came from i-1 or i-2.
+3. base case dp[1] = cost[1], dp[2] = cost[2];
+
+class Solution {
+public:
+    int minCostClimbingStairs(vector<int>& cost) {
+        int n = cost.size();
+        vector<int> dp(n+1, -1);
+        
+        function<int(int)> solve = [&](int i){
+            if(i < 2) return 0;
+            
+            if(dp[i] != -1) return dp[i];
+            
+            return dp[i] = min(solve(i-1) + cost[i-1], solve(i-2) + cost[i-2]); 
+            
+        };
+        return solve(n);
+    }
+};
