@@ -1,0 +1,41 @@
+1. dp(row, col) tells us the largest square whose right most corner is row, col.
+
+2. Recurrence :-
+if current element is zero then answer till this part is 0. 
+else answer will :-
+How square is formed using three other corners.
+so just minimum of all those and plus + 1.
+
+
+
+class Solution {
+public:
+    int maximalSquare(vector<vector<char>>& matrix) {
+        int n = matrix.size() , m = matrix[0].size();
+        vector<vector<int>> dp(n, vector<int>(m, -1));
+        int ans = 0;
+        function<int(int ,int )> solve = [&](int i , int j){
+            if(i < 0 || j < 0) return 0;
+            if(dp[i][j] != -1) return dp[i][j];
+            
+            if(matrix[i][j] == '0'){
+                dp[i][j] = 0;
+            }
+            else{
+                dp[i][j] = min({solve(i-1, j-1), solve(i-1 , j) , solve(i , j-1)}) + 1;
+            }
+            return dp[i][j];
+        
+        };
+        
+        
+        for(int i = n-1; i >=0; i--){
+            for(int j = m-1; j >= 0; j--){
+                if(matrix[i][j] == '1'){
+                    ans = max(ans, solve(i , j));       // Check for each since our defination is like square ending at this indices.
+                }
+            }
+        }
+        return ans*ans;
+    }
+};
