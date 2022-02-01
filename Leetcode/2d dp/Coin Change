@@ -1,0 +1,63 @@
+Minimum coins needed to make this amount.
+
+1. Bottom :- assume dp[i] will give me fewest number of coins needed to get the amount i.
+now recurrence
+
+we will iterate for each coin and try to come to this i. and take minimum of all these.
+
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        int n = coins.size();
+        vector<int> dp(amount + 1, 1e9);
+        
+        dp[0] = 0;
+        // dp[i] will tell us the minimum coins needed to make up i amount.
+        // We can reach to i by i - coin using coin value so
+        
+        // Recurrence :- dp[i] = min(dp[i] , dp[i-coins[j]] + 1); 
+        for(int i = 1; i <= amount; i++){
+            for(int j = 0; j < n; j++){        // Try to build this from all the available coins.
+                if(coins[j] <= i){
+                    dp[i] = min(dp[i] , dp[i-coins[j]] + 1);
+                }
+            }
+        }
+        return (dp[amount] == 1e9)?-1:dp[amount];
+    }
+};
+
+
+
+
+2. Recursive :-
+Here, dp(i , amt) using first i coins get amt in minimum coins.
+
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        int n = coins.size();
+        vector<vector<int>> dp(n , vector<int>(amount+1, -1));
+        
+        function<int(int, int)> solve = [&](int i , int amt){
+            if(i < 0 || amt < 0) return (int)1e9;
+            if(amt == 0){
+                return 0;
+            }
+            if(dp[i][amt] != -1){
+                return dp[i][amt];
+            }
+            
+            int best = 1e9;
+            best = solve(i-1, amt);     // Not taking this coin. 
+            if(coins[i] <= amt){
+                best = min(best , 1 + solve(i , amt - coins[i]));      // If we take the current coin then we can also take it again so i not i-1.
+            }
+            return dp[i][amt] = best;
+            
+        };
+        int ans = solve(n-1, amount);
+        if(ans == 1e9) return -1;
+        return ans;
+    }
+};
