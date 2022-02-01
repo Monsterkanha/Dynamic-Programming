@@ -1,0 +1,60 @@
+https://leetcode.com/problems/minimum-difficulty-of-a-job-schedule/
+
+1. Function or array that can give answer to my question.
+  -> state variable.
+  index of the job that need to be done for today.
+  day on which day we are on.
+  
+  so dp(i , day) will tells us the minimum job dificulty if we schedule ith first job on the day Day.
+
+2. Recurrence :- 
+    dp(i , day) 
+    here we are doing ith job as first job we can do some more job as well, so we will try to do all the possible jobs we
+    can do for today. and remaining to do for next days.
+    
+    -> question says we have to do atleast one job per day.
+    so we have to leave atleast d - day jobs. so we can iterate for j >= i && j < n - (d -day)
+    
+    now keep a pointer to hardest that will tell me the hardest job that is done in course of this day that 
+    is from job i to j.
+    
+3. Base condition :-
+  we have to complete all jobs by day = d. so we will just return the maximum job for ith to all for this condition.
+  Maintain a suffix array.
+  
+
+
+
+class Solution {
+public:
+    int minDifficulty(vector<int>& jobDifficulty, int d) {
+        int n= jobDifficulty.size();
+        if(n < d){
+            return -1;
+        }
+        vector<int> suff(n+1, 0);
+        
+        for(int i= n-1; i >= 0; i--){
+            suff[i] = max(suff[i+1], jobDifficulty[i]);
+        }
+        vector<vector<int>> dp(n, vector<int>(d,1e9));
+        function<int(int , int)> solve = [&](int i , int day){
+            if(day == d){
+                return suff[i];
+            }
+            if(dp[i][day] != 1e9){
+                return dp[i][day];
+            }
+            int hardest = jobDifficulty[i];
+            for(int j = i; j < n - (d-day); j++){
+                hardest = max(hardest , jobDifficulty[j]);
+                dp[i][day] = min(dp[i][day], hardest + solve(j+1, day + 1));
+            }
+            return dp[i][day];
+        };
+        
+        return solve(0 , 1);
+        
+        // solve(i , day) => if ith job is the first job for day Day.
+    }
+};
