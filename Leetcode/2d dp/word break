@@ -1,0 +1,79 @@
+we said that a good way to check if a problem should be solved with DP or greedy is to first assume that it can be solved greedily, then try to think of a counterexample.
+
+Let's say that we had \text{s} =s= "abcdef" and \text{wordDict = [}wordDict = [ "abcde", "ef", "abc", "a", "d"\text{]}]. A greedy algorithm (picking the longest substring available) will not be able to determine that picking "abcde" here is the wrong decision. Likewise, a greedy algorithm (picking the shortest substring available) will not be able to determine that picking "a" first is the wrong decision.
+
+
+
+Here Frame work.
+
+1. an array of function that will give us answer.
+state variable:
+=> index i , that will tells us which element we are taking of.
+=> any other state variable not really needed but why ?
+because we can reuse that there is no constraint such that using k words only then we have to check whehter we can use this element 
+or not.
+
+  dp[i] will tell us whether it is possible to get a string up to index i from wordDict.
+
+2. recurrence
+
+dp[i] then there must be word in wordDict whose ending is at index i. so just check whether
+s.substr(i - word.size() + 1) == word and part before to that is also possible to form or not .
+if any word satisfy for current word then we will just mark true for this.
+
+3. Base condition when dp[0] = true but if it is needed then only.
+
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        int n = s.size();
+        vector<bool> dp(n, false);
+        
+        // Dp[i] will tells us whether it is possible to make.
+        // State varible index i. that will tells us the string up to i.
+        // Now there must be a word from ending at index i ,start from i - (word.size() -1);
+        // And before that part should also be true;
+        
+        for(int i = 0; i < n; i++){
+            for(auto word: wordDict){
+                int len = word.size();
+                if(i >= len -1 && (i == len - 1 || dp[i-len])){      // Within boundary check. 
+                    if(s.substr(i - len + 1 , len) == word){
+                        dp[i] = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return dp[n-1];
+    }
+};
+
+
+
+2. Top Down
+
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        int n = s.size();
+        vector<int> dp(n, -1);
+        
+        function<int(int)> solve = [&](int i){
+            if(i < 0) return 1;
+            if(dp[i] != -1) return dp[i];
+            
+            for(auto word: wordDict){
+                int len = word.size();
+                if(i >= len -1 && solve(i-len)){        // whether previous condition is satisfied or not.
+                    if(s.substr(i - len + 1 , len) == word){
+                        return dp[i] = 1;
+                    }
+                }
+            }
+            return dp[i] = 0;
+        };
+        
+        return solve(n-1);
+    }
+};
