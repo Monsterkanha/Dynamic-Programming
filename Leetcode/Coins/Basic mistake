@@ -1,0 +1,67 @@
+Well, the real reason why the answer changes because of loops is because of the change in dp definition when you try to reduce the space complexity.If we define dp[i][j] as "number of ways to get sum 'j' using 'first i' coins", then the answer doesn't change because of loop arrangement.
+
+So why does the answer change only when we try to reduce the space complexity?
+
+To get the correct answer, the correct dp definition should be dp[i][j]="number of ways to get sum 'j' using 'first i' coins". Now when we try to traverse the 2-d array row-wise by keeping only previous row array(to reduce space complexity), we preserve the above dp definition as dp[j]="number of ways to get sum 'j' using 'previous /first i coins' " but when we try to traverse the 2-d array column-wise by keeping only the previous column, the meaning of dp array changes to dp[j]="number of ways to get sum 'j' using 'all' coins".
+
+In the below code you can see that if we are not interested in reducing the space complexity, both the loop arrangements yield the same answer.
+
+Code:-
+
+   class Solution {
+
+   public int change(int amount, int[] coins) {       
+             if(coins.length==0) 
+                 {
+                     if(amount==0) return 1;
+                      return 0;
+                }
+    
+    int dp[][]=new int[coins.length][amount+1];
+    
+    //Initializing first column
+    for(int i=0;i<coins.length;i++)
+        dp[i][0]=1;
+    
+    //Initializing first row.
+    for(int i=1;i<=amount;i++)
+    {
+        if(i%coins[0]==0)
+            dp[0][i]=1;
+        else
+            dp[0][i]=0;
+    }
+   
+  //Check the difference between interchanging the for loops.
+  //Both of them work. You can comment it out and check.  
+    
+    
+  ////////1st one
+  for(int i=1;i<coins.length;i++)
+  {
+    for(int j=1;j<=amount;j++)
+    {
+      if(j>=coins[i])
+        dp[i][j]=dp[i-1][j]+dp[i][j-coins[i]];
+      else
+         dp[i][j]=dp[i-1][j];
+    }
+  }
+    
+    
+  ///////2nd one
+  for(int j=1;j<=amount;j++)
+  {
+    for(int i=1;i<coins.length;i++)
+    {
+      if(j>=coins[i])
+        dp[i][j]=dp[i-1][j]+dp[i][j-coins[i]];
+      else
+        dp[i][j]=dp[i-1][j];
+    }
+  }
+    
+    return dp[coins.length-1][amount];
+   }
+  }
+ }
