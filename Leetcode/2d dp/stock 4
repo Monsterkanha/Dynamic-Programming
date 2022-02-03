@@ -1,0 +1,75 @@
+Here, at most k transaction :- what is maximum profit you can get.
+
+Framework :-
+1. A function that will give the answer.
+1. A function that answers the problem for a given state
+
+What information do we need at each state/decision?
+
+We need to know what day it is (so we can look up the current price of the stock), and we need to know how many transactions we have left. These two are directly related to the input.
+
+The note in the problem description says that we cannot engage in multiple transactions at the same time. This means that at any moment, we are either holding one unit of stock or not holding any stock. We should have a state variable that indicates if we are currently holding stock. This variable is fine as a boolean, but for caching purposes, let's use an integer alternating between \text{0}0 and \text{1}1 (\text{0}0 means not holding, \text{1}1 means holding).
+
+To summarize, we have 3 state variables:
+1. i, which represents we are on the i th day. The current price of the stock is prices[i].
+2. transactionsRemaining, which represents how many transactions we have left. This number goes down by 1 whenever we sell a stock.
+3. holding, which is equal to 0 if we are not holding a stock, and 1 if we are holding a stock. If holding is 0, we have the option to buy a stock. Otherwise, we have the option to sell a stock.
+
+The problem is asking for a maximum achievable profit. Therefore, let's have a function 
+  dp(i, tleft , holding).
+
+2. A recurrence relation to transition between states
+
+At each state, we need to make a decision that depends on what \text{holding}holding is. Let's split it up and look at our options one at a time:
+1. if we are holding a stock :- we have two options either sell or do nothing, 
+if we sell, then our tleft will be decrease by one and now for next day we are no more holding.  then profit = prices[i] + dp(i +1, tleft - 1, 0);
+2. if we are not holding a stock :- then we can either buy or do nothing.
+  profit = - prices[i] + dp(i+1, tleft, 1) now for next state we are holding a stock.
+
+and now doing nothing means that we are not next stage with same number of transaction left and we are having same state of holding.
+
+Of course, we always want to make the best decision. We can see that in both scenarios, doing nothing is the same - \text{dp(i + 1, transactionsRemaining, holding)}dp(i + 1, transactionsRemaining, holding). Therefore, we have a recurrence relation of:
+
+dp(i, transactionsRemaining, holding) = max(doNothing, sellStock) if holding == 1 otherwise max(doNothing, buyStock)
+
+Where,
+doNothing = dp(i + 1, transactionsRemaining, holding),
+sellStock = prices[i] + dp(i + 1, transactionsRemaining - 1, 0), and
+buyStock = -prices[i] + dp(i + 1, transactionsRemaining, 1).
+
+
+
+class Solution {
+public:
+    int maxProfit(int k, vector<int>& prices) {
+        int n = prices.size();
+        if(n <= 1){
+            return 0;
+        }
+        int dp[n][k+1][2];
+        memset(dp, -1, sizeof(dp));
+        
+        
+        function<int(int, int ,int)> solve = [&](int i , int tleft, int holding){
+            if(i == n || tleft == 0)    return 0;
+            if(dp[i][tleft][holding] != -1) return dp[i][tleft][holding];
+            
+            int ans = 0;
+            if(holding == 1){   // We can sell or do nothing.
+                int doNothing = solve(i+1, tleft, holding);
+                int sell = prices[i] + solve(i+1, tleft - 1, 0);
+                ans = max(doNothing , sell);
+            }
+            else{
+                int doNothing = solve(i+1, tleft, holding);
+                int buy = -prices[i] + solve(i+1, tleft, 1);
+                ans = max(doNothing , buy);
+            }
+            return dp[i][tleft][holding] = ans;
+        };
+        
+        return solve(0 , k , 0);
+    }
+};
+
+
