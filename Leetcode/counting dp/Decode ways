@@ -1,0 +1,40 @@
+1. Framework :- state variable i.
+dp(i) will tells us the number of ways to decode the string up to index i.
+2. recurrence
+either take last character as individual bit  it should be > '0'
+or take last two character as individual then check condition
+finally add both answer.
+
+3. Base case :- 
+ if(i < 0) return 1; means we can successfully create this one.
+ if(i == 0 && s[i] == '0') return 0; can't create not neccessary.
+ 
+ 
+ 
+ 
+ class Solution {
+public:
+    int numDecodings(string s) {
+        int n = s.size();
+        
+        vector<int> dp(n, -1);
+        
+        function<int(int)> solve = [&](int i){
+            if(i < 0) return 1;
+            if(i == 0 && s[i] == '0') return 0;
+            
+            if(dp[i] != -1) return dp[i];
+            
+            int o_ch = 0, t_ch = 0;
+            if(s[i] > '0'){
+                o_ch = solve(i-1);
+            }
+            if(i > 0 && (s[i-1] == '1' || (s[i-1] == '2' && s[i] <= '6'))){
+                t_ch = solve(i-2);
+            }
+            return dp[i] = o_ch + t_ch;
+        };
+        
+        return solve(n-1);
+    }
+};
