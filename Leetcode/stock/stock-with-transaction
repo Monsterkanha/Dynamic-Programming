@@ -1,0 +1,32 @@
+Here, again 2 d Dp, here holding means holding or not.
+if we are on holding :- we can either sell or do nothing
+
+dp(i , holding) ith day with this status.
+
+class Solution {
+public:
+    int maxProfit(vector<int>& prices, int fee) {
+        int n = prices.size();
+        
+        int dp[n][2];
+        memset(dp , -1, sizeof(dp));
+        
+        function<int(int,int)> solve = [&](int i, int holding){
+            if(i == n) return 0;
+            if(dp[i][holding] != -1) return dp[i][holding];
+            int ans = 0;
+            if(holding == 1){
+                int sell = prices[i] - fee + solve(i + 1, 0);
+                int doNothing = solve(i+1, holding);
+                ans = max(sell , doNothing);
+            }
+            else{
+                int buy = -prices[i] + solve(i+1,1);
+                int doNothing = solve(i+1, holding);
+                ans = max(buy, doNothing);
+            }
+            return dp[i][holding] = ans;
+        };
+        return solve(0,0);
+    }
+};
