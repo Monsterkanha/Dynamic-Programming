@@ -1,0 +1,76 @@
+Here, n houses and paint them with one of the k colors. cost[n][k]
+
+dp[i][j] minimum cost to paint ith house with jth color.
+dp[i][j] =  min(dp[i-1][k]) for all k o to k != j;
+
+time complexity = n*k*k;
+level 1: n is the total number of houses we have to paint. 
+level 2: the first k represent for each house we need to try k colors. 
+level 3: the second k was caused by the process to search the minimum cost (if not use certain color).
+
+We can optimise level 3.
+by maintaining two minimum mn_1, mn_2;
+mn_1 = first minimum of dp[i-1][k] for all k, mn_2 is second.
+
+now if dp[i-1][j] != pre_mn_1 means we can use because any of rest is pre_mn_1 so minimum is mn_1;
+or if equal = then we have to use pre_mn_2;
+and now update mn_1, and mn_2;
+
+
+if (dp[j] != pre_min_1) {
+    dp[j] = pre_min_1 + costs[i][j];
+} else{
+    dp[j] = pre_min_2 + costs[i][j];
+}
+----------------------------------------------------------
+The way to maintain "min_1" and "min_2".
+for (int i = 0; i < len; i++) {
+    ...
+    min_1 = Integer.MAX_VALUE;
+    min_2 = Integer.MAX_VALUE;
+    ...
+    if (dp[j] <= min_1) {
+        min_2 = min_1;
+        min_1 = dp[j];
+    } else if (dp[j] < min_2){
+        min_2 = dp[j];
+    }
+}
+
+
+
+dp[i][j] we can use 1D as well. 
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int32_t main () {
+	// freopen("herding.in", "r", stdin);
+	// freopen("herding.out", "w", stdout);
+
+	int mn1 = 0, mn2 =0 , premn1, premn2;
+
+	for(int i =0; i < n; i++){
+		premn1 = mn1;
+		premn2 = mn2;
+		mn1 = INT_MAX;
+		mn2 = INT_MAX;	
+		for(int j = 0; j < k; j++){
+			if(dp[j] != premn1){
+				dp[j] = premn1 + cost[i][j];
+			}
+			else{
+				dp[j] = premn2 + cost[i][j];
+			}
+			if(dp[j] <= mn1){
+				mn2 = mn1;
+				mn1 = dp[j];
+			}
+			else if(dp[j] < mn2){
+				mn2 = dp[j];
+			}
+		}
+	}
+	return mn1;
+}
