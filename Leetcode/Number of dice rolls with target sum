@@ -1,0 +1,41 @@
+Framework
+1. i means using first i coins, 
+2. sum means this sum is required.
+
+dp(i, sum) will tells us the number of ways to get the sum = sum using first i coins.
+
+2. recurrence
+Here, for every coin we have k possible options try all them out.
+
+3. base case:- 
+if(sum == 0 && i < 0) means we have got the sum and left with no coin then return 1. possible solution.
+
+if(i < 0 || sum <=0 ) return 0; because either we have exhausted the coins or we have croosed the number of dices.
+
+
+#define ll long long
+class Solution {
+public:
+    int numRollsToTarget(int n, int k, int target) {
+        ll dp[n][target+1];
+        memset(dp , -1LL, sizeof(dp));
+        int mod = 1e9 + 7;
+        
+        function<ll(int, int)> solve = [&](int i, int req){
+            if(i < 0 && req == 0) return 1LL;
+            if(i < 0 || req < 0) return 0LL;
+            
+            if(dp[i][req] != -1) return dp[i][req];
+            
+            ll cnt = 0;
+            for(int j = 1; j <= k; j++){
+                if(j <= req)
+                (cnt += solve(i-1,req-j))%=mod;
+            }
+            return dp[i][req] = (cnt + mod)%mod;
+        };
+        ll ans = solve(n-1,target)%mod;
+        if(ans < 0) ans = (ans + mod)%mod; 
+        return ans;
+    }
+};
