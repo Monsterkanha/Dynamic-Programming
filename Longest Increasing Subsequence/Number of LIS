@@ -1,0 +1,42 @@
+Here, dp[i] will contain , { length and number of LIS}
+intiailize all with 1.
+
+now for each i, we will try the LIS is one which ends at this index.
+so we will do iterate for all previous that element is smaller than that can help us in achieving the result.
+
+
+class Solution {
+public:
+    int findNumberOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        vector<pair<int,int>> dp(n , {1 , 1});
+        // LIS length, cnt;
+        int maxLen = 0, cnt = 0;
+    
+        for(int i= 0; i < n; i++){
+            for(int j = 0; j < i; j++){
+                if(nums[j] < nums[i]){
+                     if(dp[i].first == dp[j].first + 1){   // we have found a LIS whose length is equal so add this to our previous stored result. dp[j].second
+                        dp[i].second += dp[j].second;     // will represent that this many substring were there for this LIS. 
+                     }
+                     if(dp[i].first < dp[j].first + 1){
+                         dp[i].first = dp[j].first + 1;  // LIS has changed for this i. so its cnt will also from the previous one.
+                         dp[i].second = dp[j].second;
+                     }
+                }
+                
+            }
+            if(maxLen == dp[i].first){
+                cnt += dp[i].second; // Here, if this LIS we have got earlier and now we are also getting so increase its cnt.
+            }
+            else if(maxLen < dp[i].first){
+                cnt = dp[i].second;
+                maxLen = dp[i].first;  // if our previous was not the actual LIS so , update it and new cnt as well. 
+            }
+            
+        }
+        
+        
+        return cnt;
+    }
+};
