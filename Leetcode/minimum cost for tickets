@@ -1,0 +1,71 @@
+1. consider dp for all 365 days.
+
+Framework:-
+At ith day i can choose any of the 3 passes.
+1. ith day ->  we are on. 
+dp(i) = minimum amount needed to travel from ith day to end.
+
+Recurrence :- 
+either we can take 1 day or 7 day or 30 day. take minimum of these.
+Base case:- 
+If( i > maxN) then now no need to buy pass return 0.
+
+class Solution {
+public:
+    int mincostTickets(vector<int>& days, vector<int>& costs) {
+        vector<bool> isP(366,false);
+        int n = days.size(), maxN = days[n-1];;
+        for(int i = 0;i < n; i++){
+            isP[days[i]] = true;
+        }
+        
+        int dp[maxN+1];
+        memset(dp , -1, sizeof(dp));
+        
+        function<int(int)> solve = [&](int i){
+            if(i > maxN) return 0;  
+            if(dp[i] != -1) return dp[i];
+            
+            int ans;
+            if(isP[i]){
+                ans = min({costs[0] + solve(i+1), costs[1] + solve(i+7) , costs[2] + solve(i+30)});
+            }
+            else ans = solve(i+1);  // If this day was not included in our trip then directly jump to next one.
+            return dp[i] = ans;
+        };
+        
+        return solve(1);
+    }
+};
+
+
+2. Only iterate on the days of travel.
+1. i means ith day of travel only not continuous day.
+so if I have take 7 day pass then jump to next >= pass is over.
+
+I am using lower_bound for this.
+
+class Solution {
+public:
+    int mincostTickets(vector<int>& days, vector<int>& costs) {
+        // vector<bool> isP(366,false);
+        int n = days.size(), maxN = days[n-1];;
+        
+        int dp[n+1];
+        memset(dp , -1, sizeof(dp));
+        
+        function<int(int)> solve = [&](int i){
+            if(i >= n) return 0;   // all travel days are been handled.
+            if(dp[i] != -1) return dp[i]; // 
+            
+            int ans;
+            auto oneDay = lower_bound(days.begin() , days.end() , days[i] + 1) - days.begin(); // Iterator to the first day which is not covered by 1 day pass on current day.
+            auto Week = lower_bound(days.begin() , days.end() , days[i] + 7) - days.begin();
+            auto month = lower_bound(days.begin() , days.end() , days[i] + 30) - days.begin();
+            ans = min({costs[0] + solve(oneDay) , costs[1] + solve(Week), costs[2] + solve(month)});
+            return dp[i] = ans;
+        };
+        
+        return solve(0);
+    }
+};
