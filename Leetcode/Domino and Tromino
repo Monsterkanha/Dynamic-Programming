@@ -1,0 +1,59 @@
+Here, we will see that 
+1. top down -> intuitive 
+-> i index where we are currently on
+dp(i) will tells us the number of ways from index i to n.
+
+2. recurrence
+-> at i index either I can put single vertical then ans += dp(i+1)
+or two horizontal -> ans += dp(i+2)
+or combination of tromino and domino try to visualize -> 2 for own combination and 2*dp(i+3) + 2*dp(i+4)
+
+
+class Solution {
+public:
+    int numTilings(int n) { 
+        int dp[n];  // dp[i] = number of possible arrangement from index i to n.
+        memset(dp , -1, sizeof(dp));
+        int mod = 1e9 + 7;
+        function<int(int)> solve = [&](int i){
+            if(i == n)  return 1;   // Base case in counting set to non zero.
+            if(i > n) return 0;  // Then our assumption was not valid. 
+            if(dp[i] != -1) return dp[i];
+            
+            long long ans = (solve(i+1) + solve(i+2))%mod;
+            for(int j = i+3; j <= n; j++){   // Here simply we want to calculate suffix sum.
+                (ans += 2*1LL*solve(j))%=mod;
+            }
+            return dp[i] = ans%mod;
+        };
+        int res = solve(0);
+        if(res < 0) res = (res + mod)%mod;
+        return res;
+    }
+};
+
+2. Better way :-
+class Solution {
+public:
+    int numTilings(int n) { 
+        if(n == 1) return 1;
+        if(n == 2) return 2;
+        vector<long long> dp(n+1, 0);   from index 1 to n. number of ways to arrange. 
+        dp[1] = 1;
+        dp[2] = 2;
+        dp[3] = 5;
+        int mod = 1e9 + 7;
+        for(int i = 4; i <= n; i++){
+            (dp[i] += 2*1LL*dp[i-1] + dp[i-3])%=mod;  // How this is derived, see at the bottom.
+        }
+        return (dp[n] + mod)%mod;
+    }
+};
+
+dp[n] = dp[n-1] + dp[n-2] + 2 * (dp[n-3] + ... + dp[0]) -- E1
+dp[n-1] = dp[n-2] + dp[n-3] + 2 * (dp[n-4] + ... + dp[0]) -- E2
+.
+.
+E1 - E2:
+dp[n] - dp[n-1] = dp[n-1] + dp[n-3]
+--> dp[n] = 2*dp[n-1] + dp[n-3]
