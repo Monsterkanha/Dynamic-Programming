@@ -2,7 +2,7 @@
 Here, I will be posting dp problems.
 
 
-# how to memoize 3d dp when range is unknown -> using map.
+#### Memoize 3d dp-> using map.
 ```cpp
 class Solution {
 private:
