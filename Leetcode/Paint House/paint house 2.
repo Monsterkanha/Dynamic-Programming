@@ -41,6 +41,7 @@ for (int i = 0; i < len; i++) {
 
 dp[i][j] we can use 1D as well. 
 
+
 ```
 #include <bits/stdc++.h>
 using namespace std;
@@ -74,4 +75,7 @@ int32_t main () {
 	}
 	return mn1;
 }
+
 ```
+
+
