@@ -8,7 +8,7 @@ Minimum coins needed to make this amount.
 now recurrence
 
 we will iterate for each coin and try to come to this i. and take minimum of all these.
-
+```
 class Solution {
 public:
     int coinChange(vector<int>& coins, int amount) {
@@ -30,7 +30,7 @@ public:
         return (dp[amount] == 1e9)?-1:dp[amount];
     }
 };
-
+```
 
 
 
