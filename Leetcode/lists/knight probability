@@ -1,0 +1,33 @@
+#define ll long long
+class Solution {
+public:
+    double knightProbability(int n, int k, int row, int column) {
+        double dp[n][n][k+1];
+        memset(dp, 0, sizeof(dp));
+        
+        int dx[8] = {-2,-1,1,2,2,1,-1,-2};
+        int dy[8] = {1,2,2,1,-1,-2,-2,-1};
+        
+        function<bool(int, int)> isvalid = [&](int i, int j){
+            if(i < 0 || j < 0 || i >= n || j >= n) return false;
+            return true;
+        };
+        function<double(int , int ,int )> solve = [&](int i , int j , int k){
+            if(k == 0){
+                if(isvalid(i, j)) return 1.00;
+                else return 0.00;
+            } 
+            if(dp[i][j][k] != 0) return dp[i][j][k];
+            double rate = 0;
+            for(int t = 0; t < 8; t++){
+                int X = i + dx[t], Y = j + dy[t];
+                if(isvalid(X,Y))
+                rate += 0.125*solve(X, Y, k-1);
+            }
+            return dp[i][j][k] = rate;
+        };
+        
+        return solve(row, column, k);
+    }
+};
+// dp(i , j , k) number of safe spots it can make so that it will be on the board.
