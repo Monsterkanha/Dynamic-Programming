@@ -1,0 +1,25 @@
+Here, I will have a 2d dp and here dp(i , j) will tell me the number of ways to get unique bst from integers from i to j. 
+Here to construct this I will try to make every element as root and then calculate number of unquie left bst and right and then multiply these.
+Base condition will if (st >= end) return 1.
+
+eg. 1, 2, 3, 4, 5
+Here first suppose my i = 1, j = 5 and assume my root is 3 so my answer will be dp(1, 2)*dp(4,5);
+
+class Solution {
+public:
+    int numTrees(int n) {
+        vector<vector<int>> dp(n+1, vector<int>(n+1,-1));
+        
+        function<int(int,int)> solve = [&](int i, int j){
+            if(i >= j) return 1;
+            if(dp[i][j] != -1) return dp[i][j];
+            int val = 0;
+            for(int k = i; k <= j; k++){
+                val += solve(i, k-1) * solve(k+1,j);
+            }
+            return dp[i][j] = val;
+        };
+        
+        return solve(1, n);
+    }
+};
