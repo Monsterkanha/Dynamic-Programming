@@ -1,0 +1,42 @@
+https://leetcode.com/problems/palindromic-substrings/discuss/105688/Very-Simple-Java-Solution-with-Detail-Explanation
+
+
+Step 1: Start a for loop to point at every single character from where we will trace the palindrome string.
+checkPalindrome(s,i,i); //To check the palindrome of odd length palindromic sub-string
+checkPalindrome(s,i,i+1); //To check the palindrome of even length palindromic sub-string
+
+Step 2: From each character of the string, we will keep checking if the sub-string is a palindrome and 
+increment the palindrome count. To check the palindrome, keep checking the left and right of the character if it is same or not.
+
+
+eg. aabaa
+
+suppose i am at index 2. 
+aabaa
+  i   first checking odd length means ith element will be at the center and we check while its left and right elements are equal and increment the count.
+  
+now, if i have to cnt even length then I assume i and i+1 element will be at the center and check the left and right of it. 
+
+checkPalindrome will work in O(n) and main loop = O(n) total = O(n^2).
+
+
+
+class Solution {
+public:
+    int countSubstrings(string s) {
+        int n = s.size();
+        int cnt = 0;
+        function<void(int,int)> checkPal = [&](int i, int j){
+            while(i >= 0 && j < n && s[i] == s[j]){
+                cnt++;
+                i--;
+                j++;
+            }  
+        };
+        for(int i = 0; i < n; i++){
+            checkPal(i,i);
+            checkPal(i,i+1);
+        }
+        return cnt;
+    }
+};
