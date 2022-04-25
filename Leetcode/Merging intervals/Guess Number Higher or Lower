@@ -1,0 +1,26 @@
+Here
+dp[i][j] = minimum coins needed in worst case for i to j numbers.
+now we will iterate for each k from i to j. and try to compute the answer and answer will be if I guess this kth element
+then solve(i, k-1) and solve(k+1,j) maximum of these two will give me the worst case time. but i want total time to be 
+minimum I use dp[i][j] = min(x1, x2, ..... xn) where xi is guessing ith element.
+
+
+class Solution {
+public:
+    int getMoneyAmount(int n) {
+        vector<vector<int>> dp(n+1, vector<int>(n+1,-1));
+        
+        function<int(int,int)> solve = [&](int i, int j){
+            if(i >= j) return 0;
+            
+            if(dp[i][j] != -1) return dp[i][j];
+            int mn = 1e9;
+            for(int k = i; k<= j; k++){
+                mn = min(mn, max(solve(i,k-1),solve(k+1,j)) + k);
+            }
+            return dp[i][j] = mn;
+        };
+        
+        return solve(1,n);
+    }
+};
