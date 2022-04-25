@@ -1,0 +1,37 @@
+// dp[i][j] = maximum coin i will get if i burst ballon from i to j .
+// Recursive step :- iterate for every k :
+// k is my first ballon to burst then k -1 and k +1 become dependent . so avoid we assume 
+// kth ballon is last ballon to burst then my recursion step will be
+// dp[i][j] = solve(i, k-1) + solve(k+1,j) + now cost of bursting this ballon. 
+// now all ballon from i to j has been burst so, now we have i-1 and j+1 ballon. 
+
+
+Matrix chain multiplication we will look for the order so this way we try to iterate for every element.
+
+1. Come up with brute force then try to find redudancy. 
+
+class Solution {
+public:
+    int maxCoins(vector<int>& nums) {
+        
+        int n = nums.size();
+        vector<vector<int>> dp(n,vector<int>(n,-1));
+        
+        function<int(int ,int)> solve = [&](int i, int j){
+            if(i > j) return 0;
+            if(dp[i][j] != -1) return dp[i][j];
+            int maxi = 0;
+            for(int k = i; k <= j; k++){
+                int c1 = ((i-1 < 0)?1:nums[i-1])*nums[k]*((j + 1  >= n)?1:nums[j+1]);
+                int c2 = solve(i,k-1);
+                int c3 = solve(k+1,j);
+                maxi = max(maxi, c1 + c2 + c3);
+            }
+
+            return dp[i][j] = maxi;
+        };
+        
+        return solve(0,n-1);
+        
+    }
+};
