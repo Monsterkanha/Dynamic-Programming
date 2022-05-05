@@ -1,0 +1,28 @@
+look at the constraints and then define your dp accordingly.
+dp[i][j] = answer such that last two element are i and j. now for this nums[j] - nums[i] we need to find a value from 0 to i such that A.P is maintained
+
+x    i   j are in dp
+x = 2*i - j;
+find last occurance of this elements before ith index. and update our dp[i][j] with this.
+
+
+int Solution::solve(const vector<int> &nums) {
+    int n = nums.size();
+    if(n == 1) return 1;
+    unordered_map<long, int> M;
+    vector<vector<int>> dp(n, vector<int>(n,2));
+    int ans = 0;
+    for(int i= 0; i < n; i++){
+        for(int j = i+1; j < n; j++){
+            long x = 2*nums[i] - nums[j];
+            
+            if(M.find(x) != M.end()){
+                dp[i][j] = max(dp[i][j], dp[M[x]][i] + 1);
+            }
+            ans = max(ans, dp[i][j]);
+        }
+        M[nums[i]] = i;
+    }
+    
+    return ans ; 
+}
