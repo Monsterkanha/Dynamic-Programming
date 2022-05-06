@@ -1,0 +1,83 @@
+Here, Main observation is that orientation of heap will remain same, because of max heap property.
+
+Now, we can have maximum element on the root of it.
+There will be assume L elements on the left and R elements on the right : we also know L + R = n-1;
+Now no. ways to choose those L elements will be (n-1cL) remaining will go to R and now multiply with orientation of these numbers. T(L) and T(R).
+
+
+How to get this L.
+
+suppose height of tree = log2(n), now maximum elements on the last level = (1<< h);
+but p = number of elements that could actually be there for this n :-  n - (number till up this)
+number of elements upto this level :- 2^0 + 2^1 + 2^2 ..... 2^(h-1) = 2^h - 1;
+p = n - (2^h-1);
+
+now if(p >= mx/2) means last level would be full for left subtree. so its a full binary tree with effective height = h-1;
+2^0 + 2^1 + 2^2 .... 2^(h-1) = 2^h - 1;   
+          N            0
+        L   R          1
+                       2
+                       3
+                       4
+                       .
+                       .
+                       h-1
+                       h
+now if(p < mx/2) all elements of last go to left.
+
+then l = 2^h - 1 - ( mx/2 - p)   ;  total element if full binary tree  - (elements that we taken extra);
+
+
+Now, for calculate ncr = n-1cr + n-1cr-1;
+
+
+
+
+int Solution::solve(int A) {
+    
+    if(A < 3) return 1;
+    const int mod = 1e9 + 7;
+    vector<int> dp(A+1,-1);
+    vector<vector<int>> ncr(A+2,vector<int>(A+2,-1));
+    function<int(int, int)> choose = [&](int n ,int r){
+        if(r > n) return 0;
+        if(n <= 1) return 1;
+        if(r == 0) return 1;
+
+        if(ncr[n][r] != -1) return ncr[n][r];
+
+        return ncr[n][r] = (choose(n-1,r-1) + choose(n-1,r))%mod;
+    };
+
+    function<int(int)> getLeft = [&](int n){
+        if(n == 1) return 0;
+        int h = log2(n);
+        
+
+        int mx = (1 << h);
+
+        int p = n - ((1<< h)- 1);
+        if(p >= mx/2){
+            return ((1<< h) - 1)%mod;
+        }
+        else{
+            return ((1<< h) - 1 - (mx/2 - p))%mod;
+        }
+    };
+    function<int(int)> solve = [&](int n){
+        if(n <= 1) return 1;
+        if(dp[n] != -1) return dp[n];
+
+        int l = getLeft(n);
+        
+        
+        long long ans = ((choose(n-1,l)*1LL*solve(l))%mod)*(solve(n-1-l))%mod;
+        return dp[n] = ans%mod;
+        
+    };
+
+    return solve(A);
+
+    
+}
+
