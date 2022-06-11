@@ -12,22 +12,68 @@ here dp[i][j] here no. of steps to get this sum using previous value.
 
 
 int Solution::solve(const vector<int> &A) {
-    int sum=0 , n = A.size();
-    for(int i=0;i<A.size();i++) sum+=A[i];
-    sum/=2;
-    vector<vector<int>> dp(n+1, vector<int>(sum+1, INT_MAX));
-    dp[0][
-        
-    ]=0;
-    for(int i=0;i<A.size();i++)
-    {
-        for(int j=sum;j>=A[i];j--)
-        {
-            if(dp[j-A[i]]!=INT_MAX) dp[j]=min(dp[j], dp[j-A[i]]+1);
+    int n = A.size();
+    int sum = 0;
+    for(auto &x: A){
+        sum += x;
+    }
+    sum /= 2;
+    
+    vector<int> dp(sum + 1, INT_MAX); // minimum elements required to make this sum;
+    
+    dp[0] = 0;
+    // using first i coins the minimum number of way to get this sum. if its INT_MAX then making this sum is not possible. 
+    for(int i= 0; i < n; i++){
+        for(int j = sum; j >= A[i]; j--){
+            if(dp[j- A[i]] != INT_MAX){
+                dp[j] = min(dp[j], dp[j-A[i]] + 1);
+            }
         }
     }
-    for(int i=sum;i>=0 ;i--)
-    {
-        if(dp[i]!=INT_MAX) return dp[i];
+    for(int i = sum; i >= 0; i--){
+        if(dp[i] != INT_MAX)    return dp[i];
     }
+    
+    return -1;    
+}
+
+2. 
+int Solution::solve(const vector<int> &A) {
+    int n = A.size();
+    int sum = 0;
+    for(auto &x: A){
+        sum += x;
+    }
+    sum /= 2;
+    
+    vector<vector<int>> dp(n, vector<int>(sum + 1, -1));    // calculate the maximum profit we can get with bag of capacity of sum/2.
+    vector<vector<int>> dp2(n, vector<int>(sum + 1, -1));   // minimum amount taken to reach to that sum.
+    
+    function<int(int,int)> util = [&](int i, int req){
+        if(i < 0 || req <= 0) return 0;
+        
+        if(dp[i][req] != -1) return dp[i][req];
+        
+        dp[i][req] = util(i-1, req);
+        if(A[i] <= req){
+            dp[i][req] = max(dp[i][req], A[i] + util(i-1, req - A[i]));
+        } 
+        return dp[i][req];
+    };
+    int s2 = util(n-1, sum);
+    
+    function<int(int,int)> util2 = [&](int i, int req){
+        if(req == 0) return 0;
+        if(i < 0) return n+1;
+        
+        if(dp2[i][req] != -1)   return dp2[i][req];
+        
+        dp2[i][req] = util2(i-1, req);
+        if(A[i] <= req){
+            dp2[i][req] = min(dp2[i][req], 1 + util2(i-1,req-A[i]));
+        }
+        return dp2[i][req];
+    };
+    
+    return util2(n-1, s2);
 }
