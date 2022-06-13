@@ -1,0 +1,52 @@
+1. use of topological sorting first store the in degree of each and every vertex use of adjacent vertex.
+Then maximum no. of the time topological run is my answer.
+
+class Solution {
+public:
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        int n = matrix.size(), m = matrix[0].size();
+        vector<vector<int>> in(n, vector<int>(m, 0));
+        
+        int dx[4] = {-1,0,1,0};
+        int dy[4] = {0,1,0,-1};
+        for(int i = 0; i <n; i++){
+            for(int j = 0; j < m; j++){
+                for(int t = 0; t < 4; t++){
+                    int nx = i + dx[t], ny = j + dy[t];
+                    if(nx < 0 || nx >= n || ny < 0 || ny >= m) continue;
+                    if(matrix[nx][ny] < matrix[i][j]){
+                        in[i][j]++;
+                    }
+                }
+            }
+        }
+        
+        queue<pair<int,int>> q;
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(in[i][j] == 0) q.push({i,j});
+            }
+        }
+        
+        int ans = 0;
+        while(!q.empty()){
+            int len = q.size();
+            ans++;
+            for(int i= 0; i < len; i++){
+                auto x = q.front().first, y = q.front().second;
+                q.pop();
+                for(int t = 0; t < 4; t++){
+                    int nx = x + dx[t], ny = y + dy[t];
+                    if(nx < 0 || nx >= n || ny < 0 || ny >= m) continue;
+                    if(matrix[nx][ny] > matrix[x][y]){
+                        in[nx][ny]--;
+                        if(in[nx][ny] == 0){
+                            q.push({nx,ny});
+                        }
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
