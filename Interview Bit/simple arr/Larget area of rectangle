@@ -1,0 +1,28 @@
+Here, height[j] will tell me the height of the pillar of this base.
+Now for sorting we use count sort method. 
+We know that each value lies in between 1 to n. so we make a bucket of size n + 1, and put down the frequencies. 
+Now we just have the height of current tower and that with the total element on the right side. 
+
+int Solution::solve(vector<vector<int> > &A) {
+    int n = A.size(), m = A[0].size();
+    vector<int> height(m,0), temp(n+1, 0);
+    int ans = 0, cnt = 0;
+    
+    for(int i = 0; i < n; i++){
+        
+        for(int j = 0; j < m; j++){
+            height[j] = (A[i][j] == 0)?0:height[j] + 1; 
+        }
+        fill(temp.begin(), temp.end(), 0);
+        cnt = 0;
+        for(int k = 0; k < m; k++){
+            temp[height[k]]++;
+        }
+        for(int k = n; k >= 0; k--){
+            cnt += temp[k];
+            ans = max(ans, cnt*k);
+        }
+    }
+    return ans;
+    
+}
