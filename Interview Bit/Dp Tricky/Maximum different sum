@@ -1,0 +1,34 @@
+dp[j] will tell whether making this sum is possible or not using first i coins. since we are iterating this way. 
+
+for(int i = 0; i < n; i++)
+{
+  for(int j = 0; j < sum; j++)      // making this sum using first i coins.   // get answer ordered one.
+                
+}
+
+
+// if I swap these two loops making this sum using all available coins this will give me unordered set.   1 2 3  , 2 3 1 all combination i will get. 
+
+
+
+
+int Solution::solve(vector<int> &A) {
+    int n = A.size(), sum = 0;
+    for(auto &x: A) sum += x;
+    int tot = sum;
+    sum /= 2;
+    
+    vector<int> dp(sum+1,0);
+    dp[0] = 1;
+    for(int i = 0; i < n; i++){  
+        for(int j = sum; j >= A[i]; j--){    // reverse doing because we want the answer from previous state and that we don't effect for our next state. 
+            dp[j] |= dp[j-A[i]];
+        }
+    }
+    for(int i = sum; i >= 0; i--){
+        if(dp[i]){
+            return tot - 2*i;
+        }
+    }
+    return -1;
+}
