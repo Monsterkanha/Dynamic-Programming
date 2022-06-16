@@ -1,0 +1,60 @@
+Create a dp that will have dp[i][j] using first i members minimum cost taken to get j capacity, if it is impossible then INT_MAX;
+Here, we can take elements unlimited number of times.
+we can have a 2d -> 1d DP, Here so forward loop. 
+
+
+int Solution::solve(const vector<int> &A, const vector<int> &B, const vector<int> &C) {
+    int n = B.size();
+    int maxN = 0;
+    for(auto &x: A) maxN = max(maxN , x);
+    
+    vector<int> dp(maxN + 1, 1e9);
+    dp[0] = 0;
+    
+    for(int i = 0; i < n; i++){       // using first i coins 
+        for(int j = B[i]; j <= maxN; j++){   // creating this sum. 
+            dp[j] = min(dp[j], dp[j-B[i]] + C[i]);
+        }
+    }
+    int tot = 0;
+    for(auto &x: A){
+        tot += dp[x];
+    }
+    return tot;
+    
+}
+
+
+2. If one dish can be taken only once by user. Then we have to flip inner loop since we need value from previous one. NOt from the current one. 
+
+
+
+
+
+2D dp version
+int Solution::solve(const vector<int> &A, const vector<int> &B, const vector<int> &C) {
+    int n = B.size();
+    int maxN = 0;
+    for(auto &x: A) maxN = max(maxN , x);
+    
+    vector<vector<int>> dp(n+1, vector<int> (maxN + 1, 1e9));
+    for(int i = 0; i <= n; i++){
+        dp[i][0] = 0;
+    }
+    
+    for(int i = 1; i <= n; i++){
+        for(int j = 1; j <= maxN; j++){
+            dp[i][j] = dp[i-1][j];
+            if(j >= B[i-1]){
+                dp[i][j] = min(dp[i][j], dp[i][j-B[i-1]] + C[i-1]);
+            }
+        }
+    }
+    int tot = 0;
+    for(auto &x: A){
+        tot += dp[n][x];
+    }
+    return tot;
+    
+}
+
