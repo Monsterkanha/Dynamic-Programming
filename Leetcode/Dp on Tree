@@ -1,0 +1,37 @@
+You are given the root of a binary tree. We install cameras on the tree nodes where each camera at a node can monitor its parent, itself, and its immediate children.
+
+Return the minimum number of cameras needed to monitor all nodes of the tree.
+
+1. Analyze the problem build all the state. Then use memo. 
+
+
+
+// Prepare state for dp root
+// 1. has camera -> Then it can supvise its children also.
+// 2. montired -> may or may not choose to put camera. 
+//     answer is minimum of these two
+// 3. Not under supervise -> Have to put camera either on left or on right on root.
+//     answer is minimum of these three.
+    
+    
+class Solution {
+public:
+    int minCameraCover(TreeNode* root, int hasCam = 0, bool isMon = 0) {
+        if(!root)   return 0;
+        if(hasCam)  return 1 + minCameraCover(root->left, 0, 1) + minCameraCover(root->right, 0,1);
+        if(isMon){
+            auto noCam = minCameraCover(root->left, 0, 0) + minCameraCover(root->right, 0, 0);
+            auto rootCam = 1 + minCameraCover(root->left, 0,1) + minCameraCover(root->right, 0, 1);
+            return min(noCam, rootCam);
+        }
+        
+        if(root->val != 0)  return root->val;       // memoization.
+        
+        auto rootCam = 1 + minCameraCover(root->left, 0, 1) + minCameraCover(root->right, 0, 1);
+        auto leftCam = (!root->left)?INT_MAX:minCameraCover(root->left, 1, 0) + minCameraCover(root->right, 0,0);
+        auto rightCam = (!root->right)?INT_MAX:minCameraCover(root->left, 0, 0) + minCameraCover(root->right, 1,0);
+        
+        return root->val = min({rootCam, leftCam, rightCam});
+
+    }
+};
