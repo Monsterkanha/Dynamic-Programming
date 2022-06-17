@@ -1,0 +1,65 @@
+Problem is Based on Dynamic Programming
+
+Defining Subproblems:
+At any point while filling the board, there are three possible states that the last column can be in:
+
+
+An = No. of ways to completely fill a 3 x n board. (We need to find this)
+Bn = No. of ways to fill a 3 x n board with top corner in last column not filled.
+Cn = No. of ways to fill a 3 x n board with bottom corner in last column not filled.
+
+NOTE: The following states are impossible to reach:
+
+
+Finding Reccurences
+NOTE: Even though Bn and Cn are different states, they will be equal for same ‘n’. i.e Bn = Cn
+Hence, we only need to calculate one of them.
+
+Calculating An:
+
+An = An-2 + Bn-1 + Cn-1
+An = An-2 + 2*(Bn-1)
+
+Calculating Bn:
+
+Bn = An-1 + Bn-2
+
+Final Recursive Relations are:
+An = An-2 + 2*(Bn-1)
+Bn = An-1 + Bn-2
+
+Base Cases:
+A0 = 1
+A1 = 0
+B0 = 0
+B1 = 1
+
+int Solution::solve(int A) {
+    const int mod = 1e9 + 7;
+    vector<long long> f(A+1, 0), c(A+1, 0);
+    
+    f[0] = 1;
+    c[1] = 1;
+    
+    for(int i = 2; i <= A; i++){
+        f[i] = ((f[i-2]%mod) + (2*c[i-1])%mod)%mod;
+        c[i] = (f[i-1]%mod + c[i-2]%mod)%mod;
+    }
+    return f[A];
+}
+
+Another observation. 
+
+int Solution::solve(int A) {
+    if(A % 2) return 0;
+    const int mod = 1e9 + 7;
+    vector<long long> dp(A+1, 0);
+    dp[0] = 1;
+    dp[1] = 0;
+    dp[2] = 3;
+    
+    for(int i = 4; i <= A; i +=2){
+        dp[i] = ((4*dp[i-2])%mod - (dp[i-4])%mod)%mod;
+    }
+    return (dp[A] + mod)%mod;
+}
