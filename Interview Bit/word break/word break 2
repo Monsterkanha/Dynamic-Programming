@@ -1,0 +1,40 @@
+1. start from the first element now keep extending it untill there is a word that is in the dictonary.
+2. Now call recusive for the rest of the words. and just append the word in all those. 
+3. Time to memoize that result. 
+
+vector<string> Solution::wordBreak(string A, vector<string> &B) {
+    int n = A.size(), bn = B.size(), k = 0;
+    unordered_map<string,int> ch;
+    for(auto &x: B){
+        ch[x] = 1;
+        k = max(k , (int)x.size());
+    } 
+    unordered_map<int,vector<string>> trav;     // use of vector<string> trav(n, string(0));
+
+    function<vector<string>(int)> solve = [&](int st){
+        vector<string> temp, sub;
+        if(st == n){
+            temp.push_back("");
+            return temp;
+        }
+        
+        if(trav.find(st) != trav.end()) return trav[st];
+        
+        
+        string curr = "";
+        for(int i = st; i < min(st + k, n); i++){
+            curr += A[i];
+            if(ch.find(curr) != ch.end()){
+                sub = solve(i + 1);
+                for(auto &x: sub){
+                    temp.push_back(x == ""?curr:curr+" "+ x);
+                }
+            }
+        }
+        return trav[st] = temp;
+    };
+    return solve(0);  
+}
+
+
+vector<vector<int>> that will be just the sizes of the element.
