@@ -1,0 +1,50 @@
+Here, we define two dp , f and g.
+f contains the maximum diameter in subtree of x that starts with x. 
+g contains the maximum diameter that starts from subtree of x and passes through x and end in another subtree.
+
+here, f = 1 + max(f1, f2,f3,....)
+g = 2 + fn-1 + fn-2;
+
+either use some sorting method to get the two maximum or use greedy method to get two maximum.
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int main(){
+    int n, u, v;
+    cin>>n;
+
+    vector<int> adj[n+1], f(n+1,0), g(n+1,0);
+    int diameter = 0;
+    for(int i= 0; i < n-1; i++){
+        cin>>u>>v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    function<void(int, int)> dfs = [&](int v, int par){
+        int mx1 = -1, mx2 = -2;
+
+        for(auto &x: adj[v]){
+            if(x != par){
+                dfs(x, v);
+                if(mx1 < f[x]){
+                    mx2 = mx1;
+                    mx1 = f[x];
+                }
+                else if(mx2 < f[x]){
+                    mx2 = f[x];
+                }
+            }
+        }
+        f[v] = 0;
+        if(mx1 != -1)   f[v] = 1 + mx1;
+        if(mx2 >= 0)    g[v] = 2 + mx1 + mx2;
+
+        diameter = max({diameter, f[v], g[v]});
+
+    };
+    dfs(1,-1);
+    cout<<diameter<<endl;
+
+}
