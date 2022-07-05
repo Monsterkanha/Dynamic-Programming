@@ -1,0 +1,39 @@
+Given an array of non-negative integers, A, you are initially positioned at the 0th index of the array.
+Each element in the array represents your maximum jump length at that position.
+Determine if you are able to reach the last index.
+
+1. DP 
+dp[i] = whether i can reach to end if i am at ith index. so i can make jump of 1 to A[i] from here. 
+
+
+
+int Solution::canJump(vector<int> &A) {
+    int mx = 0;
+    for(auto &x: A) mx = max(mx, x);
+    int n = A.size();
+    
+    vector<int> dp(n, 0);
+    dp[n-1] = 1;
+    for(int i = n-2; i >= 0; i--){
+        for(int j = 0; j <= A[i]; j++){
+            if(i + j >= n || dp[i+j]){
+                dp[i] = 1;
+            }
+        }
+    }
+    return dp[0];
+}
+
+2. Greedy
+
+Last is the index i want to reach to. for current index i can reach to last then i need to reach to this index. 
+
+int Solution::canJump(vector<int> &A) {
+    int n = A.size(), last = n-1;
+    
+    for(int i= n-2; i>= 0; i--){
+        if(i + A[i] >= last)    last = i;
+    }
+    return last == 0;
+    
+}
