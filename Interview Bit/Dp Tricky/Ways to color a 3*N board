@@ -1,0 +1,87 @@
+1. Such type of problem either do dp + dfs most prefer, if space then you can use, some color combination optimize of 
+Define two state color2 and color3 and try to find out recurrence state.
+
+
+
+Here, dp[n][a0][b0][c0] will tell the number of ways to paint first n rows such that previous (n + 1)th row has a0, b0 , c0 colors respectively.
+
+So, it is dp with memosiation.
+
+To declare array you can declare outside but don't forget to memset. 
+
+class Solution {
+public:
+    int dp[5001][5][5][5] = {};
+    int numOfWays(int n) {
+        memset(dp, 0 , sizeof(dp));
+        const int mod = 1e9 + 7;
+        function<int(int,int,int,int)> dfs = [&](int n, int a0, int b0, int c0){
+            if(n == 0) return 1;        // base case :- in counting question set it to 1. means its a valid match.
+            
+            if(dp[n][a0][b0][c0] != 0) return dp[n][a0][b0][c0];
+            
+            int ans = 0;
+            vector<int> col = {1,2,3};
+            for(auto a: col){
+                if(a == a0) continue;
+                for(auto b: col){
+                    if(b == b0 || b == a) continue;       // basic condition. 
+                    for(auto c: col){
+                        if(c == c0 || b == c) continue;
+                        
+                        (ans += dfs(n-1, a, b, c))%=mod;
+                        
+                    }
+                }
+            }
+            return dp[n][a0][b0][c0] = ans;     // memoize the answer. 
+        };
+        
+        
+        return dfs(n , 0 , 0 , 0);
+    }
+};
+
+// dp[n][a0][b0][c0] = number of ways to color first n rows such that n+1 row is colored with a0, b0, c0;
+
+
+2nd way if you observe the pattern 
+
+There are only two possibilities to form a non-adjacent row: 3 colors combination (use all three colors, e.g., RYG) and 2 color combination (use only two of three colors, e.g., RYR).
+We add the new row one by one. Apart from its inner adjacent relation, every new added row only relies on the previous one row (new added row is only adjacent with the row above it).
+Every color combination follows the same pattern indicated below. 3-color combination can generate two 3-color combination, and two 2-color combination for the next round. 2-color combination can generate two 3-color combination, and three 2-color combination for the next round.
+image
+
+Let's try to have a math eqution to show the change above.
+The number of 3-color combination for round n is: S(n). The number of 2-color combination for round n is T(n).
+Thus, we can have two simple math equations reflecting the relation between current round (n) with next round (n + 1) for both 3-color-combination and 2-color-combination.
+
+S(n + 1) = 2 * S(n) + 2 * T(n)
+T(n + 1) = 2 * S(n) + 3 * T(n)
+
+RBG   -> can generate GRB , BGR these two 3 combination.    -> so 2*S(n)
+RBG   -> can generate BRB , BGB  these two 2 combination.   -> so 2*T(n)
+
+
+
+Now for base state :- 1st has 3 , 2nd has 2, 3rd has 1.
+for color2 = 3*2 and third one is same as first.
+
+so final code 
+
+class Solution {
+public:
+    
+    int numOfWays(int n) {
+        long long ans = 0, mod = 1e9 + 7;
+        
+        long long color3 = 6,color2 = 6;
+        for(int i = 2; i <= n; i++){
+            long long temp = color3;
+            color3 = (2*color3 + 2*color2)%mod;
+            color2 = (2*temp + 3*color2)%mod;
+        }
+        return (int)(color2 + color3)%mod;
+    }
+};
+
