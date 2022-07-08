@@ -1,0 +1,60 @@
+Here, m*n so generate all possible moves. and now lastId will be the lastId and now iterate on every move so that these two not collide 
+
+class Solution {
+public:
+    int colorTheGrid(int m, int n) {
+        int mod = 1e9 + 7;
+        vector<string> moves;
+        string temp = "";
+        
+        function<void(int,char)> generate = [&](int i, char prev){
+            if(i == 0){
+                moves.push_back(temp);
+                return ;
+            }
+            for(auto col = '1'; col <= '3'; col++){
+                if(col == prev) continue;
+                temp.push_back(col);
+                generate(i-1, col);
+                temp.pop_back();
+            }
+                
+        };
+        
+        // Generate all possible valid combination of m size. 
+
+        // dp[i][lastId] number of ways to generate all id such that 
+        
+        generate(m, '0');
+        vector<vector<int>> dp(n+1, vector<int>((int)moves.size() + 1, -1));
+        
+        function<int(int,int)> solve = [&](int i, int lastId){
+            if(i == n) return 1;
+            if(dp[i][lastId] != -1) return dp[i][lastId];
+            
+            int ans = 0;
+            for(int j = 0; j < moves.size(); j++){
+                auto move = moves[j], last = moves[lastId];
+                bool same = false;
+                
+                for(int t = 0; t < m; t++){
+                    if(move[t] ==  last[t]) same = true;
+                }
+                if(!same)  (ans += solve(i+1, j))%=mod; 
+            }
+            return dp[i][lastId] = ans;
+        };
+        
+        
+        int ans = 0;
+        for(int i = 0; i < moves.size(); i++){
+            (ans += solve(1, i))%=mod;
+        }
+        return ans;
+    }
+};
+
+
+
+// 1st way :- Here, generate all possible moves string and now chooses id.
+// Now, since it is now try to find the answer for next state
