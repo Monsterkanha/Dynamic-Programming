@@ -1,0 +1,49 @@
+Here, make dp[n+1][5][5][5] 
+and in color {1,2,3,4} -> remaining condition same. 
+
+int dp[100001][5][5][5] = {};
+int Solution::solve(int n) {
+    memset(dp, 0 , sizeof(dp));
+    const int mod = 1e9 + 7;
+    function<int(int,int,int,int)> dfs = [&](int n, int a0, int b0, int c0){
+        if(n == 0) return 1;
+        
+        if(dp[n][a0][b0][c0] != 0) return dp[n][a0][b0][c0];
+        
+        int ans = 0;
+        vector<int> col = {1,2,3,4};
+        for(auto a: col){
+            if(a == a0) continue;
+            for(auto b: col){
+                if(b == b0 || b == a) continue;
+                for(auto c: col){
+                    if(c == c0 || b == c) continue;
+                    
+                    (ans += dfs(n-1, a, b, c))%=mod;
+                    
+                }
+            }
+        }
+        return dp[n][a0][b0][c0] = ans;
+    };
+    
+    
+    return dfs(n , 0 , 0 , 0);
+}
+
+
+2. Another way using color3 and color2
+
+int Solution::solve(int A) {
+    long int color2=12;    // 4*3
+    long int color3=24;    // 4*3*2
+    for(int i=2;i<=A;++i){
+        long int temp = color3;
+        color3 = (11 * color3 + 10*color2 ) % 1000000007;
+               
+        color2 = ( 5 * temp + 7*color2 ) % 1000000007;
+    }
+    long num = (color3 + color2)% 1000000007;
+    return (int)num;
+}
+
