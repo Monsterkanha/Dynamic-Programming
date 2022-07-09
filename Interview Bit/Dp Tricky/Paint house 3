@@ -1,0 +1,85 @@
+Here, dp[i][col][target] will tell the minimum cost to paint ith house to last and such that last house painted was col and we had target number of pairing left.
+
+Now, if the house is originally painted then we can do nothing just call for i + 1, but check if this house color same as previous then we have same target 
+else target - 1.
+
+Similarly, if house not painted then we can choose any of k col and paint and add that paint cost.
+
+Base condn -> i == n && target == 0   return 0;
+i == n || target < 0 return 1e9.
+
+
+class Solution {
+public:
+    int minCost(vector<int>& houses, vector<vector<int>>& cost, int n, int k, int target) {
+        int dp[n+1][k+3][target+1];
+        memset(dp, -1, sizeof(dp));
+        
+        function<int(int,int,int)> solve = [&](int i, int col, int target){
+            if(i == n && target == 0) return 0;
+            if(i == n || target < 0)   return (int)1e9;
+            
+            if(dp[i][col][target] != -1)    return dp[i][col][target];
+            
+            int ans = 1e9;
+            if(houses[i] != 0){
+                if(houses[i] == col){
+                    ans = solve(i + 1, houses[i], target);
+                }
+                else{
+                    ans = solve(i + 1, houses[i], target-1);
+                }
+            }
+            else{
+                for(int j = 1; j <= k; j++){
+                    if(j == col){
+                        ans = min(ans, cost[i][j-1] + solve(i+1, j, target));
+                    }
+                    else{
+                        ans = min(ans,cost[i][j-1] + solve(i+1, j, target-1));
+                    }
+                }
+            }
+            return dp[i][col][target] = ans;
+        };
+        
+        
+        int ans = solve(0, k+1, target);
+        return (ans == 1e9)?-1:ans;
+    
+    }
+};
+
+
+2. More concise version :-
+
+class Solution {
+public:
+    int minCost(vector<int>& houses, vector<vector<int>>& cost, int n, int k, int target) {
+        int dp[n+1][k+3][target+1];
+        memset(dp, -1, sizeof(dp));
+        
+        function<int(int,int,int)> solve = [&](int i, int col, int target){
+            if(i == n && target == 0) return 0;
+            if(i == n || target < 0)   return (int)1e9;
+            
+            if(dp[i][col][target] != -1)    return dp[i][col][target];
+            
+            int ans = 1e9;
+            if(houses[i] != 0){
+                ans = solve(i + 1, houses[i], target - (houses[i] != col));
+            }
+            else{
+                for(int j = 1; j <= k; j++){
+                    ans = min(ans, cost[i][j-1] + solve(i+1, j, target - (j != col)));
+                }
+            }
+            return dp[i][col][target] = ans;
+        };
+        
+        
+        int ans = solve(0, k+1, target);
+        return (ans == 1e9)?-1:ans;
+    
+    }
+};
