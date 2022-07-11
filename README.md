@@ -15,6 +15,7 @@ public:
         
         dp[r][c][K] = val;
         return val;
+```
 
 ### Coin change problem, 
 1st. No of ways to get ordered way of count. eg. 
@@ -42,6 +43,7 @@ Here, two cases arises one 1. Can't take one coin twice then
     }
     return dp[B];
 }
+```
 
             2. Case when one coin only once.
                 then we need dp[j-A[i]] value stored by previous ith iteration so reverse loop.
@@ -58,6 +60,7 @@ Here, two cases arises one 1. Can't take one coin twice then
     }
     return dp[B];
 }
+```
 
                                 
                     
