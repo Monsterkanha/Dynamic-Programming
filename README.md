@@ -15,3 +15,49 @@ public:
         
         dp[r][c][K] = val;
         return val;
+
+### Coin change problem, 
+1st. No of ways to get ordered way of count. eg. 
+N = 4 coins = [1,2,3] 
+ans = 1,1,1,1   2,2  1,1,2   1,3 
+you can take repeatation of coin.
+
+Now here, dp[i][j] will tell using first i coins number of ways to get jth sum. 
+Here, two cases arises one 1. Can't take one coin twice then 
+                                dp[i][j] = dp[i-1][j] if you do not take this coin
+                                dp[i][j] += dp[i][j-A[i]] if you can take this one.
+                            
+                            Now, we want to conver it to 1D dp so here we can have more than one time take. 
+                            So we need dp[i-A[i]] for current coin as well so increasing loop.
+  
+  ```cpp
+  int Solution::coinchange2(vector<int> &A, int B) {
+    int n = A.size(), mod = 1000007;
+    vector<int> dp(B+1, 0);
+    dp[0] = 1;
+    for(int i = 0; i < n; i++){
+        for(int j = A[i]; j <= B; j++){
+            (dp[j] += dp[j-A[i]])%=mod;
+        }
+    }
+    return dp[B];
+}
+
+            2. Case when one coin only once.
+                then we need dp[j-A[i]] value stored by previous ith iteration so reverse loop.
+   
+   ```cpp
+   int Solution::coinchange2(vector<int> &A, int B) {
+    int n = A.size(), mod = 1000007;
+    vector<int> dp(B+1, 0);
+    dp[0] = 1;
+    for(int i = 0; i < n; i++){
+        for(int j = B; j >= A[i]; j++){
+            (dp[j] += dp[j-A[i]])%=mod;
+        }
+    }
+    return dp[B];
+}
+
+                                
+                    
