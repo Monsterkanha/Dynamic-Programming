@@ -1,0 +1,81 @@
+class Solution {
+public:
+    int longestValidParentheses(string s) {
+
+        int n = s.size(), ans = 0;
+        vector<int> dp(n+1, 0);
+        
+        for(int i = 1; i <= n; i++){
+            if(s[i-1] == '(')   dp[i] = 0;
+            
+            else{
+                if(i >= 2 && s[i-2] == '('){
+                    dp[i] = dp[i-2] + 2;
+                }
+                else if(i >= 2 && s[i-2] == ')'){
+                    int j = i - 1 - dp[i-1];
+                    if(j > 0 && s[j-1] == '('){
+                        dp[i] = dp[i-1] + 2 + dp[i-2 - dp[i-1]];
+                    }
+                }
+            }
+            ans = max(ans, dp[i]);
+        }
+        
+        return ans;
+    }
+};
+
+
+
+// dp[i] = longest valid parantheses ending at ith index (1 based). because we would need dp[i-2] 
+// Now if(s[i] == '(') then dp[i] = 0 
+
+// s[i] == ')' then we have two cases :-
+// either s[i-1] == '(' then dp[i] = dp[i-2] + 2;
+
+// or s[i-1] == ')' then we know for dp[i-1] the longest ending at i-1 index.
+
+// ....................
+//          ^      ^
+//                 i-1
+//          <------>
+//              dp[i-1] so we want the index just before this longest.
+            
+
+// Now we know that that index would be i - 1 - dp[i-1] (think about it) index just before start of dp[i-1].
+// if that value is '(' then only we can map that with s[i] then add 
+// dp[i] = dp[i-1] + dp[i-2-dp[i-1]] (answer of before of that open)  2;
+
+
+Using stack :- push -1 because that will gonna help you. 
+
+int Solution::longestValidParentheses(string A) {
+    int n = A.size(), ans = 0;
+    stack<int> st;
+    
+    for(int i = 0; i < n; i++){
+        if(A[i] == '('){
+            st.push(-1);
+        }
+        else{
+            int curr = 0;
+            while(!st.empty() && st.top() != -1){
+                curr += st.top();
+                st.pop();
+            }
+            if(!st.empty()){
+                st.pop();
+                while(!st.empty() && st.top() != -1){
+                    curr += st.top();
+                    st.pop();
+                }
+                curr += 2;
+                st.push(curr);
+            }
+
+            ans = max(ans, curr);
+        }
+    }
+    return ans;
+}
