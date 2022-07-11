@@ -18,7 +18,7 @@ public:
 ```
 
 ### Coin change problem, 
-1st. No of ways to get ordered way of count. eg. 
+##### 1st. No of ways to get ordered way of count. eg. 
 N = 4 coins = [1,2,3] 
 ans = 1,1,1,1   2,2  1,1,2   1,3 
 you can take repeatation of coin.
@@ -35,8 +35,8 @@ Here, two cases arises one 1. Can't take one coin twice then
   int Solution::coinchange2(vector<int> &A, int B) {
     int n = A.size(), mod = 1000007;
     vector<int> dp(B+1, 0);
-    dp[0] = 1;
-    for(int i = 0; i < n; i++){
+    dp[0] = 1;                      // Don't forget to initialise with 1. 
+    for(int i = 0; i < n; i++){    // interpret of this using first i coins total ways to get jth sum. 
         for(int j = A[i]; j <= B; j++){
             (dp[j] += dp[j-A[i]])%=mod;
         }
@@ -61,6 +61,27 @@ Here, two cases arises one 1. Can't take one coin twice then
     return dp[B];
 }
 ```
+
+##### 2nd where unordered way.
+Here we need to make sum using all coins avaiable so just invert the loop and you are done.
+No. of ways to create sum j using all the coins. 
+
+```cpp
+int Solution::coinchange2(vector<int> &A, int B) {
+    int n = A.size(), mod = 1000007;
+    vector<int> dp(B+1, 0);
+    dp[0] = 1;
+    for(int j = 0; j <= B; j++){
+        for(int i = 0; i < n; i++){
+            if(j >= A[i])
+            (dp[j] += dp[j-A[i]])%=mod;
+        }
+    }
+    return dp[B];
+}
+
+
+
 
                                 
                     
