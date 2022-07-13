@@ -1,0 +1,48 @@
+if constrainst are low then bitmask could be better choice.
+
+sideComb is array that store all combinations that sum to sideLen. 
+Now we will represent combination with bitmask. if bit is set then this element select.
+
+Now for current combination we find if there exist some combination that is mutually exclusive to current if 
+Yes then congo we got doubleSide combination, so we will see if there exist any other double side combo, the best way to see is that invert bitmask( xor with 1)
+Then see whether this combination is present. 
+
+if yes then you got your answer. 
+
+
+class Solution {
+public:
+    bool makesquare(vector<int>& a) {
+        int n = a.size();
+        int sum = 0;
+        
+        for(auto &x: a) sum += x;
+        
+        if(sum % 4 != 0 || n < 4) return false;
+        
+        int sideLen = sum/4;
+        
+        vector<int> sideComb, doubleSideComb(1 << n, 0);
+        int all = (1 << n) - 1;
+        
+        for(int mask = 0; mask <= all; mask++){
+            int side = 0;
+            for(int j = 0; j < n; j++){
+                if((mask >> j) & 1){
+                    side += a[j];
+                }
+            }
+            if(side == sideLen){
+                for(auto &x: sideComb){
+                    if((x & mask) == 0){
+                        int t = mask | x;
+                        doubleSideComb[t] = 1;
+                        if(doubleSideComb[all ^ t]) return true;
+                    }
+                }
+                sideComb.push_back(mask);
+            }
+        }
+        return false;
+    }
+};
