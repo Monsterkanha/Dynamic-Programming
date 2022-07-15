@@ -1,0 +1,56 @@
+'.' Matches any single character.
+
+'*' Matches zero or more of the preceding element.
+
+
+so example 
+
+b*  -> can result in b (0 to infi) number of times.
+
+so example
+
+string a =     addc
+       b =     ad*c    it means c matches with c and then start replicate previous d two times so then a matches with a. 
+       
+       
+Always try to do in 1 base index, Handle negative indexing case.
+
+
+int Solution::isMatch(const string A, const string B) {
+    int n = A.size(), m = B.size();
+    
+    vector<vector<int>> dp(n+1, vector<int>(m+1, -1));
+    
+    function<int(int,int)> solve = [&](int i, int j){
+        if(i == 0 && j == 0){
+            return 1;
+        }
+        if(j <= 0) return 0;
+        
+        if(dp[i][j] != -1) return dp[i][j];
+        
+        dp[i][j] = 0;
+        
+        
+        if(j > 1 && B[j-1] == '*'){                       // if element is * that it can either match previous character with i . 
+            if(i > 0  && (B[j-2] == A[i-1] || B[j-2] == '.')){           // if they can match then we can do either match them or can use them single times. only.
+                dp[i][j] = solve(i-1,j);
+            }
+            dp[i][j] = dp[i][j] || solve(i,j-2);    // Why this is neccesarry because this can be possible. 
+            
+        }
+        else if(i > 0 && (A[i-1] == B[j-1] || B[j-1] == '.')){
+            dp[i][j] = solve(i-1, j-1);
+        }
+        return dp[i][j];
+    };
+    
+    return solve(n, m);
+}
+
+
+That case 
+A = bbcd
+B = bb*cd  suppose * create more replica then previous b have nothing to match with then it will be false. but answer is true.
+
+
