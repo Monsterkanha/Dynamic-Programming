@@ -80,8 +80,38 @@ int Solution::coinchange2(vector<int> &A, int B) {
     return dp[B];
 }
 
+```
 
-
+### int8_t -> its a signed char.
+can assign true ,false but use this variable to return . so to avoid type cast.
+```cpp
+int Solution::isMatch(const string A, const string B) {
+    int n = A.size(), m = B.size();
+    vector<vector<int8_t>> dp(n+1, vector<int8_t>(m+1, -1));
+    
+    function<int8_t(int i, int j)> solve = [&](int i, int j){
+        if(i == 0){
+            while(j > 0 && B[j-1] == '*') j--;
+            if(j == 0) return dp[i][j] = true;
+            return dp[i][j] = false;
+        }   
+        if(j == 0) return dp[i][j] = false;
+        
+        if(dp[i][j] != -1) return dp[i][j];
+        
+        dp[i][j] = false;
+        if(A[i-1] == B[j-1] || B[j-1] == '?'){
+            return dp[i][j] = solve(i-1, j-1);
+        }
+        else if(B[j-1] == '*'){
+            return dp[i][j] = solve(i-1, j) || solve(i, j-1);
+        }
+        return dp[i][j];
+    }; 
+    
+    return solve(n, m);
+}
+```
 
                                 
                     
