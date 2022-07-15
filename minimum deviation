@@ -1,0 +1,26 @@
+If element is even we can divide and if odd then we can multiply by 2.
+
+So, idea is to convert all odd to even number by multiply them by 2.  So now we just left with one operation that is 
+reduce the maximum number. 
+Now suppose if maximum number is odd then we have to return why?  because this can't be reduced and if we reduce any other element then gap can never decrease.
+
+
+class Solution {
+public:
+    int minimumDeviation(vector<int>& nums) {
+        int n = nums.size();
+        set<int> st;
+        for(auto &x: nums){
+            if(x & 1)   st.insert(2*x);
+            else    st.insert(x);
+        }
+        int ans = *st.rbegin() - *st.begin();
+        while(*st.rbegin() % 2 ==0){
+            st.insert(*st.rbegin()/2);
+            st.erase(*st.rbegin());
+            
+            ans = min(ans, *st.rbegin() - *st.begin());
+        }
+        return ans;
+    }
+};
