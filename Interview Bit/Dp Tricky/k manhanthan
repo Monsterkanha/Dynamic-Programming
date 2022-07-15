@@ -1,0 +1,38 @@
+Here, dp[i][j][k] here maximum for i, j where we can go maximum k distance from here. 
+
+so recurrene go to all four direction with k - 1.
+
+
+vector<vector<int> > Solution::solve(int A, vector<vector<int> > &B) {
+    if(A == 0) return B;
+    int n = B.size(), m = B[0].size();
+    vector<vector<vector<int>>> dp(n, vector<vector<int>>(m, vector<int>(A+1, -1)));
+    
+    int dx[4] = {-1,0,1,0};
+    int dy[4] = {0,1,0,-1};    
+    
+    function<int(int,int,int)> util = [&](int i, int j, int k){
+        if(i < 0 || i >= n || j < 0 || j >= m) return 0;
+        
+        if(k == 0){
+            return B[i][j];
+        }
+        
+        if(dp[i][j][k] != -1) return dp[i][j][k];  
+        int ans = B[i][j];
+        for(int t = 0 ; t < 4; t++){
+            ans = max(ans , util(i + dx[t], j + dy[t], k-1));
+        }
+        return dp[i][j][k] = ans;
+    };
+    
+    
+    vector<vector<int>> ans(n, vector<int>(m , 0));
+    
+    for(int i= 0; i < n; i++){
+        for(int j = 0; j < m; j++){
+            ans[i][j] = util(i, j , A);
+        }
+    }
+    return ans;
+}
