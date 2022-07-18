@@ -1,0 +1,47 @@
+class Solution {
+public:
+    int numSubmatrixSumTarget(vector<vector<int>>& a, int target) {
+        int n = a.size(), m = a[0].size();
+        
+        unordered_map<int,int> M[m+1];
+        
+        vector<vector<int>> pre(n+1, vector<int>(m+1,0));
+        // Evaluate prefix sum for each row. 
+        for(int i = 1; i <= n; i++){
+            for(int j = 1; j <= m; j++){
+                pre[i][j] += pre[i][j-1] + a[i-1][j-1]; 
+            }
+        }
+        
+        int ans = 0;
+        
+        // Now, select any two vertical columns how a submatrix can form two end fix,
+        // Keep moving one horizontal line that will see the end of container, Now its just simple
+        // hashmap problem where you have to just find the number of times this sum has been there,
+        // Why select vertical line? because we know that we have got prefix row sum. 
+        // we keep accumulating sum while moving down side. and use hash map to get the required sum. 
+        for(int i = 1; i <= m; i++){
+            for(int j = i; j <= m; j++){
+                int curr = 0;
+                unordered_map<int,int> M;
+                M[0] = 1;
+                for(int line = 1; line <= n; line++){
+                    curr += pre[line][j] - pre[line][i-1];
+                    if(M.find(curr - target) != M.end()){
+                        ans += M[curr-target];
+                    }
+                    M[curr]++;
+                }
+            }
+        }
+        return ans;
+       
+    }
+};
+
+//     i     j    -> now accumulate sum of submatrix
+// **************   
+// **************
+// **************  -> line  :> means this will going to be the end of submatrix, now three end fixed just need
+// **************  to find one end which can be find by hashmap in O(1). 
+// **************
