@@ -1,0 +1,47 @@
+1 way brute force -> dp(i, k)  i floors are there and k eggs minimum drop required. 
+
+Here, we try to start from 1 to i floors and try to fall from here, 
+if it break at ith floor then answer is dp(i, k-1) 
+if not break means answer is from upper side dp(n-i, k) 
+maximum of these two are answer here, and take global minimum. 
+
+
+Another way instead of linearly falling try to get answer for mid floors, if left  > right means worst case we need to reduce this time 
+so move left else move right. 
+ans = 1 + max(left, right);
+
+
+int Solution::solve(int A, int B) {
+
+    vector<vector<int>> dp(B + 1, vector<int>(A + 1, -1));
+    
+    function<int(int,int)> util = [&](int floor, int egg){
+        if(egg == 1) return floor;
+        if(floor == 0) return 0;
+        
+        if(dp[floor][egg] != -1) return dp[floor][egg];
+        
+        int ans = INT_MAX, l = 1, r = floor;
+        
+        while(l <= r){
+            int mid = l + (r - l)/2;
+            int left = util(mid - 1, egg - 1);
+            int right = util(floor - mid , egg);
+            
+            int temp = 1 + max(left, right);    // We need to decrease answer for worst case scenerio. 
+            
+            if(left < right){
+                l = mid + 1;
+            }
+            else{
+                r = mid - 1;
+            }
+            ans = min(ans, temp);
+        }
+        
+        return dp[floor][egg] = ans;
+    };
+    
+    
+    return util(B, A);
+}
